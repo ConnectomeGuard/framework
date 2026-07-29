@@ -1,0 +1,91 @@
+# Phase 3.5A — Deterministic Tractography Baseline
+# Goal: Validate the connectome pipeline against published DTI connectome literature.
+# Method: Interface-seeded deterministic tracking (DIPY DeterministicMaximumDirectionGetter)
+#         using same Schaefer-100 ROI mapping and edge-construction logic as Phase 3.4.
+#
+# Key differences from Phase 3.4 (probabilistic / EuDX):
+#   Seeds : WM-GM interface  FA ∈ [0.08, 0.20)   (Phase 3.4: deep WM FA ≥ 0.15)
+#   Count : 10 000 seeds per subject              (Phase 3.4: 5 000)
+#   Stop  : FA < 0.10                             (Phase 3.4: FA < 0.15)
+#   Output: tractography_det/   connectome_det/
+
+tractography:
+  algorithm: deterministic_maximum_direction
+  backend: dipy
+  fa_threshold: 0.10               # stopping criterion — stop when FA drops below this
+  interface_fa_low:  0.08          # interface seed mask lower bound (inclusive)
+  interface_fa_high: 0.20          # interface seed mask upper bound (exclusive)
+  seeds_per_subject: 10000         # total interface seeds per subject (not per voxel)
+  step_size_mm: 0.5                # tracking step size (mm)
+  max_angle_deg: 30.0              # maximum turning angle per step
+  max_cross: 1                     # max crossing fibres to follow
+  random_seed: 42                  # numpy random seed for reproducibility
+  output_subdir: tractography_det  # relative to dti_1/
+
+connectome:
+  atlas: Schaefer2018_100Parcels7Networks_2mm_MNI152NLin2009cAsym
+  output_subdir: connectome_det    # relative to session_1/
+  reuse_phase34_atlas: true        # skip re-registration if Phase 3.4 atlas exists
+
+  included_sites:
+    - BNI
+    - NYU_1
+    - NYU_2
+    - SDSU_1
+    - TCD_1
+
+  skip_existing: true
+
+registration:
+  # Only used when Phase 3.4 atlas is absent for a subject.
+  method: dipy_affine_t1w_mediated
+  level_iters: [200, 50, 10]
+  sigmas: [3.0, 1.0, 0.0]
+  factors: [8, 4, 2]
+
+qc_thresholds:
+  # Interface seeding raises mapping ratio vs deep-WM seeds (Phase 3.4: ~8-13%).
+  # Thresholds remain conservative to catch genuine registration failures only.
+  min_mapping_ratio: 0.03
+  min_graph_density: 0.01
+  min_edge_count: 5
+  # Flag per-subject edge count < 50 % of site mean → review_required = true
+  edge_count_low_pct: 0.50
+
+outputs:
+  root: data/processed/phase35a
+  subject_tractography_csv:  det_tractography_summary.csv
+  site_tractography_csv:     det_tractography_site_summary.csv
+  subject_connectome_csv:    deterministic_connectome_summary.csv
+  site_connectome_csv:       deterministic_site_summary.csv
+  comparison_csv:            deterministic_vs_baseline_comparison.csv
+  qc_flags_csv:              deterministic_qc_flags.csv
+  report_md:                 PHASE_3_5A_REPORT.md
+  log_file:                  logs/phase3_5a_deterministic.log
+
+comparison:
+  baseline_subject_csv: data/processed/phase3_4_connectome_summary.csv
+  baseline_site_csv:    data/processed/phase3_4_site_connectome_summary.csv
+  metrics:
+    - edge_count
+    - graph_density
+    - mean_edge_fa
+    - mean_edge_md
+    - mean_edge_length
+    - mapping_success_ratio
+
+expected_behaviour:
+  # Conservative behaviour expected from deterministic vs probabilistic tracking:
+  - "lower or comparable edge density (deterministic avoids false positives)"
+  - "fewer long-range interhemispheric edges (strict angular threshold)"
+  - "higher mean FA per edge (tracks along principal eigenvector only)"
+  - "shorter mean streamline length (early termination at low-FA voxels)"
+  - "preserved major association / projection / commissural tracts"
+
+notes: >
+  Phase 3.5A generates a deterministic baseline for comparison against:
+    Phase 3.4  — probabilistic/EuDX connectome (existing baseline)
+    Phase 3.5B — future graph-based tracking (not implemented here)
+  DO NOT implement fiber-centric methods, GNN models, streamline embeddings,
+  or ASD classification in this phase.
+  All outlier subjects are preserved with review_required=true rather than deleted.

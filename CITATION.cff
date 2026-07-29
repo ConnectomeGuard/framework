@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "ConnectomeGuard: A validation framework for multi-site diffusion MRI connectomics"
+version: "v1.0-canonical"
+date-released: 2026-06-23
+license: MIT
+doi: 10.5281/zenodo.20812181
+repository-code: https://github.com/ConnectomeGuard/framework
+authors:
+  - family-names: Islam
+    given-names: Md. Maksudul
+    email: htmllab@gmail.com
+    affiliation: "Department of Computer Science and Engineering, Jahangirnagar University, Savar, Dhaka, Bangladesh"
+  - family-names: Uddin
+    given-names: Mohammad Shorif
+    affiliation: "Department of Computer Science and Engineering, Jahangirnagar University, Savar, Dhaka, Bangladesh"
+  - family-names: Ali
+    given-names: Mohammad Hanif
+    affiliation: "Department of Computer Science and Engineering, Jahangirnagar University, Savar, Dhaka, Bangladesh"
+abstract: >
+  Reference implementation of the ConnectomeGuard validation framework. Processes raw
+  ABIDE-II diffusion MRI data through skull stripping, tensor estimation, CSD FOD
+  computation, EuDX deterministic tractography, atlas registration, and 100x100
+  Schaefer connectome construction. Supports 5 acquisition sites across the
+  ABIDE-II consortium.
+keywords:
+  - diffusion MRI
+  - preprocessing
+  - connectome
+  - ABIDE-II
+  - tractography
+  - CSD
+  - neuroimaging
+  - validation framework
+preferred-citation:
+  type: software
+  title: "ConnectomeGuard: A validation framework for multi-site diffusion MRI connectomics"
+  authors:
+    - family-names: Islam
+      given-names: Md. Maksudul
+      email: htmllab@gmail.com
+    - family-names: Uddin
+      given-names: Mohammad Shorif
+    - family-names: Ali
+      given-names: Mohammad Hanif
+  year: 2026
+  doi: 10.5281/zenodo.20812181
+  url: https://github.com/ConnectomeGuard/framework

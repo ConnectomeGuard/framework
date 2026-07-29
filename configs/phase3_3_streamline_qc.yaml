@@ -1,0 +1,15 @@
+# Phase 3.3 — Streamline QC Configuration
+# -----------------------------------------
+# Sites use display names (BNI, NYU_1, ...).
+# Site folder resolution happens automatically.
+
+included_sites:
+  - BNI
+  - NYU_1
+  - NYU_2
+  - SDSU_1
+  - TCD_1
+
+# Z-score threshold for flagging per-subject outliers (|z| > threshold).
+# Applied separately within each site.
+outlier_z_threshold: 3.0

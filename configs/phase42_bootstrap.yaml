@@ -1,0 +1,41 @@
+# Phase 4.2 — Bootstrap Uncertainty Estimation
+# Date: 2026-06-04
+# Depends on: Phase 3.5A complete, Phase 3.4 atlas registration complete
+# Software: DIPY >= 1.7 (no MRtrix3 required)
+
+phase: "4.2"
+name: "bootstrap_uncertainty"
+
+sites:
+  - "BNI"
+  - "NYU_1"
+  - "NYU_2"
+  - "SDSU"
+  - "TCD"
+
+bootstrap:
+  B: 20                    # number of bootstrap runs per subject
+  base_seed: 1000          # seed for run b = base_seed + b  (1000, 1001, ..., 1019)
+  n_workers: 8             # parallel workers per subject (set to cpu_count - 2 on your machine)
+  keep_trk: false          # delete .trk after connectome built (saves ~50 MB per run per subject)
+
+tractography:
+  seeds_per_subject: 10000
+  fa_threshold:      0.10
+  interface_fa_low:  0.08
+  interface_fa_high: 0.20
+  step_size:         0.5
+  max_angle:         30.0
+  max_cross:         1
+
+qc:
+  # G-BOOT-COV: median CoV must be in this range per subject (soft flag)
+  median_cov_min: 0.05
+  median_cov_max: 1.50
+  # G-BOOT-SEED: cohort Spearman rho(CoV, mean_weight) must be < 0 (hard stop)
+  # G-BOOT-RUNS: all B=20 runs must complete
+
+paths:
+  processed_root: "data/processed/abide_ii"
+  raw_root:       "data/raw"
+  output_root:    "data/processed"

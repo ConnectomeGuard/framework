@@ -1,0 +1,22 @@
+dataset_index:
+  output_path: data/dataset_index.csv
+
+splits:
+  output_dir: data/splits
+  default_strategy: random
+  train_ratio: 0.70
+  val_ratio: 0.15
+  seed: 42
+
+  site_heldout:
+    heldout_site: null  # set to a site name to use site_heldout strategy
+
+valid_diagnoses:
+  - ASD
+  - CONTROL
+
+valid_modalities:
+  - T1w
+  - DWI
+  - rsfMRI
+  - multimodal

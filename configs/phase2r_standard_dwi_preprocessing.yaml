@@ -1,0 +1,90 @@
+# Phase 2R.1 — Standard DWI Preprocessing Configuration
+# Pipeline version: 2R.1
+# Date: 2026-06-04
+#
+# Safety contract:
+#   - All outputs go to data/processed_v2 ONLY.
+#   - data/processed (v1 pipeline) is never touched.
+#   - data/raw is never written (guard_no_raw_write enforced in code).
+
+pipeline_version: "2R.1"
+
+# ──────────────────────────────────────────────────────────
+# Sites
+# ──────────────────────────────────────────────────────────
+included_sites:
+  - BNI
+  - IP_1
+  - NYU_1
+  - NYU_2
+  - SDSU_1
+  - TCD_1
+
+excluded_sites: []
+
+# IP_1 note: processed and QC-labelled carefully.
+# NOT automatically passed to tractography.
+# Every IP_1 subject receives a QC warning in the report.
+
+# ──────────────────────────────────────────────────────────
+# Backend preferences and fallbacks
+# ──────────────────────────────────────────────────────────
+backend_preference:
+  denoise: "mrtrix_dwidenoise"    # preferred; falls back to dipy_patch2self
+  gibbs:   "mrtrix_mrdegibbs"     # preferred; falls back per fallbacks below
+  eddy:    "mrtrix_dwifslpreproc" # preferred; requires FSL + MRtrix3
+  bias:    "mrtrix_dwibiascorrect" # preferred; requires ANTs or FSL
+
+fallbacks:
+  denoise: "dipy_patch2self"   # always available
+  gibbs:   "skip_with_warning" # explicitly recorded in JSON/CSV
+  eddy:    "skip_with_warning" # explicitly recorded in JSON/CSV
+  bias:    "skip_with_warning" # explicitly recorded in JSON/CSV
+
+# Minimum steps that MUST succeed for a subject to reach status=success.
+# If any of these fail, the subject is marked status=failed.
+minimum_required_steps:
+  - raw_validation
+  - volume_correction
+  - denoise
+
+# ──────────────────────────────────────────────────────────
+# Volume correction
+# ──────────────────────────────────────────────────────────
+volume_correction:
+  signal_ratio_threshold: 0.2
+  # Rule: if n_vols == n_bvals + 1 AND ratio(last_vol, vol0) < threshold
+  #   → strip trailing volume
+  # If ratio >= threshold → mark as manual_review (do not auto-correct)
+
+# ──────────────────────────────────────────────────────────
+# Phase-encoding for eddy correction
+# ──────────────────────────────────────────────────────────
+phase_encoding:
+  default_pe_dir: null
+  # Set to "AP", "PA", "LR", "RL" if known for your acquisition.
+  # null = unknown → eddy correction skipped with warning.
+  # ABIDE-II SDSU/TCD/NYU typically acquired AP but this is not guaranteed
+  # from BIDS metadata. Do not invent this value without verifying.
+
+  allow_rpe_none_if_no_reverse_phase_encoding: true
+  require_manual_pe_dir_for_eddy: true
+  # When true: eddy correction is skipped unless default_pe_dir is set.
+  # This prevents incorrect correction from invented metadata.
+
+# ──────────────────────────────────────────────────────────
+# QC thresholds (used in qc_metrics.json, not hard stops)
+# ──────────────────────────────────────────────────────────
+qc:
+  min_b0_count: 1
+  min_dwi_count: 6
+  # Subjects below these thresholds are flagged but not excluded automatically.
+
+# ──────────────────────────────────────────────────────────
+# Safety
+# ──────────────────────────────────────────────────────────
+safety:
+  forbid_raw_writes: true
+  raw_root:    "data/raw/abide_ii"
+  output_root: "data/processed_v2"
+  # NEVER set output_root to "data/processed" — that is the v1 pipeline.

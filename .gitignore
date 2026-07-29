@@ -1,0 +1,37 @@
+# Credentials & secrets
+.env
+.env.*
+*.env
+../.env_hcp
+
+# Large data files
+data/raw/
+data/processed/
+*.nii.gz
+*.trk
+*.tck
+*.pam5
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

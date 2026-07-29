@@ -1,0 +1,95 @@
+# Phase 2R.1b — Standard DWI Preprocessing WITHOUT Patch2Self Denoising
+# Pipeline version: 2R.1b
+# Date: 2026-06-04
+#
+# REASON FOR THIS CONFIG:
+#   Phase 2R.2 found that DIPY patch2self collapsed directional DWI signal
+#   variance in ABIDE-II DTI data:
+#     BNI  (b=2500): directional std ratio 0.32, mean FA delta -0.453
+#     SDSU (b=1000): directional std ratio 0.66, mean FA delta -0.536
+#   Patch2Self cannot be safely used for these acquisitions without
+#   independent validation. Denoising is disabled until MRtrix3 dwidenoise
+#   (MP-PCA) is available and validated.
+#
+# Safety contract:
+#   - All outputs go to data/processed_v2b ONLY.
+#   - data/processed (v1) and data/processed_v2 (patch2self) are never touched.
+#   - data/raw is never written (guard_no_raw_write enforced).
+#   - Patch2Self is blocked at the code level unless allow_patch2self_experimental=true.
+
+pipeline_version: "2R.1b"
+
+# ──────────────────────────────────────────────────────────
+# Sites
+# ──────────────────────────────────────────────────────────
+included_sites:
+  - BNI
+  - IP_1
+  - NYU_1
+  - NYU_2
+  - SDSU_1
+  - TCD_1
+
+excluded_sites: []
+
+# IP_1 note: processed and QC-labelled carefully.
+# NOT automatically passed to tractography.
+
+# ──────────────────────────────────────────────────────────
+# Patch2Self safety
+# ──────────────────────────────────────────────────────────
+allow_patch2self_experimental: false
+# Setting this to true re-enables patch2self and bypasses the safety block.
+# Do NOT set to true without independent validation of directional signal
+# variance stability for the specific acquisition protocol.
+
+# ──────────────────────────────────────────────────────────
+# Backend preferences and fallbacks
+# ──────────────────────────────────────────────────────────
+backend_preference:
+  denoise: "none"              # DISABLED — patch2self corrupts directional signal
+  gibbs:   "mrtrix_mrdegibbs"  # preferred; falls back per fallbacks below
+  eddy:    "mrtrix_dwifslpreproc"
+  bias:    "mrtrix_dwibiascorrect"
+
+fallbacks:
+  denoise: "none"            # no fallback — denoising intentionally disabled
+  gibbs:   "skip_with_warning"
+  eddy:    "skip_with_warning"
+  bias:    "skip_with_warning"
+
+# Minimum steps that MUST succeed for status=success.
+minimum_required_steps:
+  - raw_validation
+  - volume_correction
+# Note: denoising removed from minimum requirements in 2R.1b
+
+# ──────────────────────────────────────────────────────────
+# Volume correction
+# ──────────────────────────────────────────────────────────
+volume_correction:
+  signal_ratio_threshold: 0.2
+
+# ──────────────────────────────────────────────────────────
+# Phase-encoding for eddy correction
+# ──────────────────────────────────────────────────────────
+phase_encoding:
+  default_pe_dir: null
+  allow_rpe_none_if_no_reverse_phase_encoding: true
+  require_manual_pe_dir_for_eddy: true
+
+# ──────────────────────────────────────────────────────────
+# QC thresholds
+# ──────────────────────────────────────────────────────────
+qc:
+  min_b0_count: 1
+  min_dwi_count: 6
+
+# ──────────────────────────────────────────────────────────
+# Safety
+# ──────────────────────────────────────────────────────────
+safety:
+  forbid_raw_writes: true
+  raw_root:    "data/raw/abide_ii"
+  output_root: "data/processed_v2b"
+  # NEVER set output_root to "data/processed" or "data/processed_v2".

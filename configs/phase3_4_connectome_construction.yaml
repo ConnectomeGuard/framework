@@ -1,0 +1,63 @@
+# Phase 3.4 — Conventional Atlas-Based Connectome Construction
+# Atlas: Schaefer 2018, 100 parcels, 7 networks (MNI152NLin2009cAsym, 2mm)
+# Registration: DIPY T1w-mediated affine
+#   Step 1 — Subject T1w → MNI T1w (12-DOF affine)
+#   Step 2 — Subject FA  → Subject T1w (6-DOF rigid)
+#   Apply inverses to bring atlas from MNI → T1w → FA/DTI space
+
+atlas:
+  name: Schaefer2018
+  desc: 100Parcels7Networks
+  resolution: 2
+  n_rois: 100
+  template: MNI152NLin2009cAsym
+
+registration:
+  method: dipy_affine_t1w_mediated
+  level_iters: [200, 50, 10]     # optimisation iterations per pyramid level (coarse → fine)
+  sigmas: [3.0, 1.0, 0.0]        # Gaussian smoothing per level (mm)
+  factors: [8, 4, 2]             # downsampling factors per level
+
+connectome:
+  included_sites:
+    - BNI
+    - NYU_1
+    - NYU_2
+    - SDSU_1
+    - TCD_1
+  skip_existing: true            # resume interrupted runs without re-processing
+
+qc_thresholds:
+  # Calibrated to WM-seeded EuDX tractography on ABIDE-II data.
+  # Typical range: mapping_ratio 8-13%, graph_density 4-6%.
+  # Only flag genuine failures (atlas registration collapse / empty connectome).
+  min_mapping_ratio: 0.03        # flag if < 3 % of streamlines assigned (registration likely failed)
+  min_graph_density: 0.01        # flag if < 1 % of possible edges present (near-empty connectome)
+
+outputs:
+  subject_csv: phase3_4_connectome_summary.csv
+  site_csv: phase3_4_site_connectome_summary.csv
+  adjacency_matrices:
+    - adjacency_streamline_count.npy   # N_roi × N_roi integer count
+    - adjacency_mean_length.npy        # mean streamline length per edge (mm)
+    - adjacency_mean_fa.npy            # mean FA per edge
+    - adjacency_mean_md.npy            # mean MD per edge
+    - adjacency_mean_ad.npy            # mean AD per edge
+    - adjacency_mean_rd.npy            # mean RD per edge
+  graph_formats:
+    - graph.graphml                    # full NetworkX graph (edge attributes included)
+  baseline_artifacts: true            # preserve per-streamline metadata for Phase 3.5 comparison
+
+known_outliers:
+  - "29012"
+  - "29030"
+  - "29055"
+  - "28869"
+  - "28909"
+  - "29102"
+
+notes: >
+  This phase builds the conventional atlas-based connectome BASELINE only.
+  DO NOT implement fiber-centric methods, GNN models, or ASD classification here.
+  Phase 3.5 will compare fiber-geometric approaches against this conventional baseline.
+  Baseline artifacts (per-streamline endpoint tables) are preserved specifically for that future comparison.

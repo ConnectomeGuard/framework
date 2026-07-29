@@ -1,0 +1,38 @@
+# Phase 3.2 — Streamline Tractography Configuration
+# ----------------------------------------------------
+# Sites use display names (BNI, NYU_1, ...).
+# The pipeline maps these to local folder names automatically.
+
+included_sites:
+  - BNI
+  - NYU_1
+  - NYU_2
+  - SDSU_1
+  - TCD_1
+
+excluded_sites:
+  - IP_1   # excluded: whole-brain FA ~0.678 (b=1000 artifact, unrescued)
+
+# Stopping criterion: tracking stops when FA drops below this value.
+fa_threshold: 0.15
+
+# Number of seed points per subject (MVP limit to control file size).
+seeds_per_subject: 5000
+
+# Step size in mm for streamline propagation.
+step_size: 0.5
+
+# Maximum crossing angle (degrees) between consecutive steps.
+max_angle: 30.0
+
+# DIPY LocalTracking max_cross parameter.
+max_cross: 1
+
+# Random seed for reproducible seed placement.
+random_seed: 42
+
+# QC thresholds
+qc:
+  min_streamline_count: 500        # warn if fewer streamlines than this
+  min_mean_length_mm: 20.0         # warn if mean length below this (mm)
+  max_file_size_mb: 500            # warn if output file larger than this (MB)
