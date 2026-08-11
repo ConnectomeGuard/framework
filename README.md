@@ -143,6 +143,7 @@ program (see the [Roadmap](ROADMAP.md)).
 
 ## Documentation
 
+- [FAQ](FAQ.md) — common questions about the framework, validation gates, scope, and usage
 - [User Guide](docs/user_guide.md) — framework stages, configuration, validation gates, and analysis results
 - [Citation metadata](CITATION.cff) — machine-readable citation (CFF format)
 
