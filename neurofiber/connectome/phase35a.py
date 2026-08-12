@@ -473,7 +473,7 @@ def generate_phase35a_report(
     | Seeding | WM mask (FA ≥ 0.15) | Interface mask (0.08 ≤ FA < 0.20) |
     | Seeds/subject | 5 000 | 10 000 |
     | Direction getter | DeterministicMaximumDirectionGetter | Same |
-    | Peaks source | CSD peaks.pam5 | Same |
+    | Peaks source | CSA-ODF peaks.pam5 | Same |
     | Stopping criterion | FA < 0.15 | FA < 0.10 |
     | Atlas registration | Phase 3.4 (reused) | Reused |
     | Output dir | connectome/ | connectome_det/ |

@@ -109,7 +109,7 @@ def generate_det_streamlines(
 
     Seeds are placed in voxels where FA is in [interface_fa_low, interface_fa_high]
     — the white/grey matter transition zone. Tracking stops when FA drops below
-    fa_threshold. Uses the same CSD peaks.pam5 as Phase 3.2.
+    fa_threshold. Uses the same CSA-ODF peaks.pam5 as Phase 3.2.
     """
     subject_id = dti_dir.parent.parent.name
     dataset    = dti_dir.parent.parent.parent.name

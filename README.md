@@ -46,7 +46,7 @@ through nine stages:
 
 1. Skull stripping and motion correction
 2. Tensor estimation (FA, MD)
-3. CSD FOD estimation (DiPy)
+3. CSA-ODF fiber-orientation estimation (DiPy)
 4. EuDX deterministic tractography (100k seeds)
 5. Atlas registration (Schaefer-100, subject space)
 6. ConnectomeGuard QC gates (Zero-Fingerprint, harmonization)
