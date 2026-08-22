@@ -15,7 +15,7 @@ summarized here and released as each paper is published.
 | **1** | ConnectomeGuard validation framework + the Zero-Fingerprint Effect | ✅ complete | 🟡 under submission | ✅ this repository |
 | **2** | Advanced connectome-construction algorithms + HCP external validation | 🟡 in progress | ⬜ planned | ⬜ future (separate repo) |
 | **3** | Biomarker discovery (adequately powered) | ⬜ planned | ⬜ planned | ⬜ future |
-| **Conf.** | Curvature-regularized graph tractography (cross-site connectome harmonization) | ✅ complete | 🟡 under submission | ✅ [`curvature-graph-tractography`](https://github.com/ConnectomeGuard/curvature-graph-tractography) |
+| **Conf.** | Connectome-construction algorithm for cross-site reproducibility (Phase-2 sub-result) | ✅ complete | 🟡 under submission | ⬜ withheld pending review |
 
 ---
 
@@ -35,10 +35,10 @@ summarized here and released as each paper is published.
 - Adequately-powered biomarker discovery (N ≈ 500–800, per the power/effect-size estimates established in Phase 1), applying the validated framework to autism and — because the framework is diagnosis-agnostic — to other conditions (e.g., schizophrenia, aging, traumatic brain injury).
 - **Research:** planned · **Publication:** planned · **Open source:** future.
 
-## Conference paper — Curvature-regularized graph tractography 🟡 (under submission)
-- A step-invariant minimum radius-of-curvature constraint applied during graph-based path enumeration, which harmonizes connectome density across acquisition sites. A focused result from the Phase-2 algorithms line, released early as a conference paper.
-- Evaluated on ABIDE-II (N = 229, 5 sites): reduces the between-site component of edge-count variability by ~35% and is more reproducible than deterministic and probabilistic streamline tractography.
-- **Research:** complete · **Publication:** under submission · **Open source:** released as a separate repository, [`curvature-graph-tractography`](https://github.com/ConnectomeGuard/curvature-graph-tractography).
+## Conference paper 🟡 (under submission)
+- A focused methodological result from the Phase-2 algorithms line, prepared as a conference paper and currently under submission.
+- Evaluated on the same ABIDE-II cohort as the framework (N = 229, 5 sites).
+- **Research:** complete · **Publication:** under submission · **Open source:** method details and code **withheld pending review**; the repository will be linked on acceptance.
 
 ---
 
